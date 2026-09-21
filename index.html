@@ -1,989 +1,611 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#2c1b14" />
-  <title>Coffee Roulette — Mau pesan kopi apa hari ini?</title>
-
-  <style>
-    :root{
-      --brown:#2c1b14;
-      --brown-2:#41271b;
-      --cream:#f4eadc;
-      --cream-2:#fffaf2;
-      --gold:#e9ad43;
-      --text:#241914;
-      --muted:#806d60;
-      --line:rgba(83,57,43,.18);
-      --shadow:0 24px 70px rgba(52,31,20,.18);
-    }
-
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      color:var(--text);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--cream);
-      overflow-x:hidden;
-    }
-
-    button{font:inherit}
-    a{text-decoration:none;color:inherit}
-
-    /* NAVBAR */
-    .navbar{
-      height:88px;
-      padding:0 7.5%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      color:#fff;
-      background:linear-gradient(135deg,#24150f,#3a2419);
-      position:relative;
-      z-index:20;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:13px;
-      min-width:0;
-    }
-
-    .brand-icon{
-      width:46px;
-      height:46px;
-      border:2px solid #fff;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      font-size:22px;
-      position:relative;
-    }
-
-    .brand-icon:before,
-    .brand-icon:after{
-      content:"";
-      position:absolute;
-      width:3px;
-      height:14px;
-      border-radius:5px;
-      background:#fff;
-      top:-13px;
-      opacity:.9;
-    }
-    .brand-icon:before{left:16px;transform:rotate(-12deg)}
-    .brand-icon:after{left:25px;transform:rotate(12deg)}
-
-    .brand-name{
-      font-size:28px;
-      font-weight:800;
-      letter-spacing:-1px;
-      white-space:nowrap;
-    }
-
-    .brand-tag{
-      margin-left:10px;
-      padding-left:18px;
-      border-left:1px solid rgba(255,255,255,.35);
-      color:#e7d9ca;
-      font-size:15px;
-      letter-spacing:.08em;
-      white-space:nowrap;
-    }
-
-    .nav-links{
-      display:flex;
-      align-items:center;
-      gap:34px;
-      font-size:15px;
-    }
-
-    .nav-links a{
-      padding:32px 0 26px;
-      color:#f4ebe4;
-      position:relative;
-    }
-
-    .nav-links a.active:after{
-      content:"";
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:18px;
-      height:3px;
-      border-radius:5px;
-      background:#e8bd69;
-    }
-
-    .nav-icon{margin-right:7px}
-
-    /* HERO */
-    .hero{
-      min-height:calc(100vh - 88px);
-      position:relative;
-      padding:52px 6.5% 58px;
-      overflow:hidden;
-      background:
-        radial-gradient(circle at 75% 28%,rgba(255,255,255,.75),transparent 30%),
-        radial-gradient(circle at 14% 72%,rgba(170,116,73,.16),transparent 26%),
-        linear-gradient(135deg,#eee0cf,#d8c2aa 55%,#eadccc);
-    }
-
-    .hero:before{
-      content:"";
-      position:absolute;
-      inset:0;
-      opacity:.25;
-      background-image:
-        radial-gradient(circle at 10px 10px,rgba(93,62,43,.13) 1px,transparent 1.4px);
-      background-size:22px 22px;
-      pointer-events:none;
-    }
-
-    .coffee-steam{
-      position:absolute;
-      right:5%;
-      top:8%;
-      width:260px;
-      height:260px;
-      border-radius:50%;
-      background:rgba(255,255,255,.2);
-      filter:blur(20px);
-    }
-
-    .hero-grid{
-      max-width:1450px;
-      margin:auto;
-      min-height:calc(100vh - 198px);
-      display:grid;
-      grid-template-columns:.78fr 1.4fr .9fr;
-      align-items:center;
-      gap:38px;
-      position:relative;
-      z-index:2;
-    }
-
-    /* LEFT */
-    .intro{
-      padding-left:8px;
-    }
-
-    .eyebrow{
-      font-size:12px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.22em;
-      color:#8a634b;
-      margin-bottom:17px;
-    }
-
-    .intro h1{
-      font-size:clamp(42px,4.1vw,69px);
-      line-height:.98;
-      letter-spacing:-3px;
-      margin:0 0 25px;
-      font-family:"Trebuchet MS",ui-sans-serif,sans-serif;
-      font-style:italic;
-      max-width:440px;
-    }
-
-    .intro h1 span{
-      position:relative;
-      display:inline-block;
-    }
-
-    .intro h1 span:after{
-      content:"";
-      position:absolute;
-      width:95px;
-      height:4px;
-      background:#3d2519;
-      left:3px;
-      bottom:-11px;
-      border-radius:50%;
-      transform:rotate(-4deg);
-    }
-
-    .intro p{
-      max-width:320px;
-      font-size:17px;
-      line-height:1.75;
-      color:#59463b;
-      margin:0;
-    }
-
-    .bean{
-      width:18px;
-      height:12px;
-      border-radius:80% 20% 80% 20%;
-      background:#4a2c1d;
-      transform:rotate(28deg);
-      position:absolute;
-      box-shadow:0 2px 5px rgba(0,0,0,.15);
-    }
-    .bean:after{
-      content:"";
-      position:absolute;
-      width:1px;
-      height:11px;
-      background:rgba(255,255,255,.22);
-      left:9px;
-      top:1px;
-      transform:rotate(20deg);
-    }
-
-    .bean.b1{left:2%;bottom:10%;transform:rotate(35deg) scale(1.2)}
-    .bean.b2{left:17%;bottom:5%;transform:rotate(-30deg)}
-    .bean.b3{right:3%;bottom:8%;transform:rotate(55deg) scale(1.4)}
-    .bean.b4{right:14%;bottom:3%;transform:rotate(-15deg) scale(.8)}
-
-    /* WHEEL */
-    .wheel-stage{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      position:relative;
-      min-width:0;
-    }
-
-    .pointer{
-      position:absolute;
-      z-index:8;
-      top:-8px;
-      left:50%;
-      transform:translateX(-50%);
-      width:0;
-      height:0;
-      border-left:25px solid transparent;
-      border-right:25px solid transparent;
-      border-top:0;
-      border-bottom:48px solid #f1b74d;
-      filter:drop-shadow(0 5px 3px rgba(0,0,0,.25));
-    }
-
-    .pointer:after{
-      content:"";
-      position:absolute;
-      left:-17px;
-      top:5px;
-      width:34px;
-      height:34px;
-      border-radius:50%;
-      background:#f8c768;
-      border:2px solid #9e6724;
-      z-index:-1;
-    }
-
-    .wheel{
-      width:min(530px,43vw);
-      height:min(530px,43vw);
-      min-width:360px;
-      min-height:360px;
-      max-width:530px;
-      max-height:530px;
-      border-radius:50%;
-      position:relative;
-      border:14px solid #3b251a;
-      box-shadow:
-        0 12px 0 #21140e,
-        0 28px 55px rgba(50,30,19,.3);
-      background:conic-gradient(
-        from -30deg,
-        #eee1cb 0deg 60deg,
-        #ae3f16 60deg 120deg,
-        #174b39 120deg 180deg,
-        #172e47 180deg 240deg,
-        #756071 240deg 300deg,
-        #242a2c 300deg 360deg
-      );
-      transform:rotate(0deg);
-      transition:transform 5.2s cubic-bezier(.12,.76,.15,1);
-    }
-
-    .wheel:before{
-      content:"";
-      position:absolute;
-      inset:9px;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.45);
-      pointer-events:none;
-    }
-
-    .wheel:after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      background:
-        conic-gradient(
-          from -30deg,
-          transparent 0deg 59deg,
-          rgba(255,255,255,.5) 59deg 60deg,
-          transparent 60deg 119deg,
-          rgba(255,255,255,.5) 119deg 120deg,
-          transparent 120deg 179deg,
-          rgba(255,255,255,.5) 179deg 180deg,
-          transparent 180deg 239deg,
-          rgba(255,255,255,.5) 239deg 240deg,
-          transparent 240deg 299deg,
-          rgba(255,255,255,.5) 299deg 300deg,
-          transparent 300deg 359deg,
-          rgba(255,255,255,.5) 359deg 360deg
-        );
-      pointer-events:none;
-    }
-
-    .wheel-label{
-      position:absolute;
-      z-index:2;
-      width:120px;
-      text-align:center;
-      font-weight:800;
-      letter-spacing:2px;
-      color:#fff;
-      text-shadow:0 2px 4px rgba(0,0,0,.28);
-      transform-origin:center;
-    }
-
-    .wheel-label small{
-      display:block;
-      font-size:8px;
-      letter-spacing:2.5px;
-      margin-top:5px;
-      font-weight:600;
-    }
-
-    .wheel-label .mini{
-      font-size:21px;
-      margin-bottom:4px;
-    }
-
-    .l1{top:14%;left:calc(50% - 60px);color:#33251e;text-shadow:none}
-    .l2{top:28%;right:5%}
-    .l3{bottom:22%;right:10%}
-    .l4{bottom:5%;left:calc(50% - 60px)}
-    .l5{bottom:22%;left:6%}
-    .l6{top:28%;left:5%}
-
-    .center-button{
-      position:absolute;
-      z-index:10;
-      left:50%;
-      top:50%;
-      transform:translate(-50%,-50%);
-      width:124px;
-      height:124px;
-      border-radius:50%;
-      border:8px solid #68452f;
-      background:radial-gradient(circle at 35% 30%,#563724,#281811);
-      color:#fff;
-      cursor:pointer;
-      box-shadow:
-        inset 0 3px 7px rgba(255,255,255,.12),
-        0 7px 12px rgba(0,0,0,.35);
-      transition:.2s ease;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .center-button:hover{
-      transform:translate(-50%,-50%) scale(1.04);
-    }
-
-    .center-button:active{
-      transform:translate(-50%,-50%) scale(.97);
-    }
-
-    .center-button .spin-icon{
-      font-size:26px;
-      line-height:1;
-      margin-bottom:6px;
-    }
-
-    .center-button strong{
-      font-size:18px;
-      letter-spacing:3px;
-    }
-
-    .center-button small{
-      font-size:8px;
-      letter-spacing:1.5px;
-      opacity:.65;
-      margin-top:3px;
-    }
-
-    .spinning .center-button{
-      pointer-events:none;
-      opacity:.75;
-    }
-
-    /* RIGHT CARD */
-    .result-column{
-      display:flex;
-      flex-direction:column;
-      gap:22px;
-    }
-
-    .result-card{
-      background:rgba(255,250,243,.87);
-      backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.8);
-      border-radius:28px;
-      padding:36px 34px 30px;
-      box-shadow:var(--shadow);
-      text-align:center;
-    }
-
-    .result-card .label{
-      color:#705d51;
-      font-size:13px;
-      letter-spacing:.15em;
-      font-weight:700;
-      text-transform:uppercase;
-    }
-
-    .cup{
-      font-size:72px;
-      line-height:1;
-      margin:19px 0 12px;
-      filter:drop-shadow(0 7px 5px rgba(66,37,20,.12));
-    }
-
-    .result-title{
-      margin:0;
-      font-size:28px;
-      letter-spacing:-.8px;
-      font-weight:850;
-    }
-
-    .result-subtitle{
-      margin:10px auto 27px;
-      max-width:260px;
-      line-height:1.55;
-      color:#78665b;
-      font-size:14px;
-    }
-
-    .stats{
-      border-top:1px solid var(--line);
-      padding-top:20px;
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-    }
-
-    .stat{
-      padding:0 10px;
-      border-right:1px solid var(--line);
-    }
-    .stat:last-child{border-right:0}
-
-    .stat-icon{
-      font-size:19px;
-      margin-bottom:6px;
-    }
-
-    .stat b{
-      display:block;
-      font-size:12px;
-      margin-bottom:3px;
-    }
-
-    .stat span{
-      display:block;
-      color:#907d70;
-      font-size:11px;
-    }
-
-    .quote{
-      background:linear-gradient(135deg,#3a2419,#24160f);
-      border-radius:22px;
-      padding:23px 25px;
-      color:#f8eee4;
-      box-shadow:0 15px 35px rgba(48,28,18,.18);
-      display:flex;
-      gap:15px;
-      align-items:center;
-    }
-
-    .quote-cup{
-      font-size:35px;
-      flex:0 0 auto;
-    }
-
-    .quote p{
-      margin:0;
-      font-size:14px;
-      line-height:1.55;
-      font-style:italic;
-      color:#eadbcf;
-    }
-
-    .quote-line{
-      display:block;
-      width:44px;
-      height:2px;
-      background:#d9a95b;
-      margin-top:10px;
-    }
-
-    /* FOOTER */
-    footer{
-      background:#25160f;
-      color:#eee2d7;
-      min-height:70px;
-      padding:0 7%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px;
-      font-size:13px;
-    }
-
-    .footer-left{
-      display:flex;
-      align-items:center;
-      gap:20px;
-    }
-
-    .footer-brand{
-      font-weight:800;
-      font-size:16px;
-    }
-
-    .footer-divider{
-      height:20px;
-      width:1px;
-      background:rgba(255,255,255,.2);
-    }
-
-    .footer-muted{color:#9e8d81}
-
-    .socials{
-      display:flex;
-      gap:18px;
-      font-size:19px;
-    }
-
-    /* RESULT POPUP */
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:25px;
-      transform:translate(-50%,25px);
-      z-index:100;
-      padding:14px 22px;
-      border-radius:999px;
-      color:#fff;
-      background:#2b1a12;
-      box-shadow:0 12px 35px rgba(0,0,0,.3);
-      opacity:0;
-      pointer-events:none;
-      transition:.35s ease;
-      font-size:14px;
-      font-weight:700;
-      white-space:nowrap;
-    }
-
-    .toast.show{
-      opacity:1;
-      transform:translate(-50%,0);
-    }
-
-    /* RESPONSIVE */
-    @media(max-width:1120px){
-      .hero-grid{
-        grid-template-columns:1fr 1.25fr;
-        grid-template-areas:
-          "intro wheel"
-          "result result";
-      }
-      .intro{grid-area:intro}
-      .wheel-stage{grid-area:wheel}
-      .result-column{
-        grid-area:result;
-        max-width:650px;
-        width:100%;
-        margin:0 auto;
-        display:grid;
-        grid-template-columns:1fr 1fr;
-      }
-      .quote{height:100%}
-    }
-
-    @media(max-width:780px){
-      .navbar{
-        height:auto;
-        min-height:74px;
-        padding:15px 20px;
-      }
-
-      .brand-name{font-size:22px}
-      .brand-icon{width:39px;height:39px;font-size:18px}
-      .brand-tag{display:none}
-      .nav-links{display:none}
-
-      .hero{
-        padding:38px 18px 45px;
-      }
-
-      .hero-grid{
-        display:flex;
-        flex-direction:column;
-        min-height:auto;
-        gap:32px;
-      }
-
-      .intro{
-        width:100%;
-        text-align:center;
-        padding:0;
-      }
-
-      .eyebrow{margin-bottom:12px}
-      .intro h1{
-        margin:0 auto 19px;
-        font-size:44px;
-        letter-spacing:-2px;
-      }
-      .intro p{
-        margin:auto;
-        font-size:15px;
-        line-height:1.6;
-      }
-
-      .wheel-stage{
-        width:100%;
-        padding-top:20px;
-      }
-
-      .wheel{
-        width:min(88vw,450px);
-        height:min(88vw,450px);
-        min-width:300px;
-        min-height:300px;
-        border-width:11px;
-      }
-
-      .pointer{
-        top:0;
-        border-left-width:19px;
-        border-right-width:19px;
-        border-bottom-width:39px;
-      }
-      .pointer:after{
-        left:-14px;
-        width:28px;
-        height:28px;
-      }
-
-      .wheel-label{
-        width:90px;
-        font-size:13px;
-        letter-spacing:1.5px;
-      }
-      .wheel-label small{font-size:6px;letter-spacing:1.6px}
-      .wheel-label .mini{font-size:17px}
-      .l1{left:calc(50% - 45px)}
-      .l4{left:calc(50% - 45px)}
-
-      .center-button{
-        width:91px;
-        height:91px;
-        border-width:6px;
-      }
-      .center-button .spin-icon{font-size:20px}
-      .center-button strong{font-size:14px;letter-spacing:2px}
-      .center-button small{font-size:6px}
-
-      .result-column{
-        display:flex;
-        width:100%;
-        gap:15px;
-      }
-
-      .result-card{
-        padding:28px 18px 24px;
-        border-radius:23px;
-      }
-
-      .cup{font-size:58px}
-      .result-title{font-size:25px}
-      .result-subtitle{font-size:13px;margin-bottom:20px}
-
-      .quote{
-        padding:20px;
-        border-radius:19px;
-      }
-
-      footer{
-        padding:18px 20px;
-        flex-direction:column;
-        justify-content:center;
-        text-align:center;
-      }
-
-      .footer-left{
-        flex-direction:column;
-        gap:8px;
-      }
-      .footer-divider{display:none}
-    }
-
-    @media(max-width:390px){
-      .intro h1{font-size:39px}
-      .wheel{
-        width:91vw;
-        height:91vw;
-      }
-      .result-card{padding-left:13px;padding-right:13px}
-      .stat{padding:0 5px}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2b1911">
+<title>Coffee Roulette</title>
+<style>
+:root{
+  --brown:#2b1911;
+  --brown2:#40261a;
+  --cream:#f1e2cf;
+  --cream2:#fffaf3;
+  --gold:#e9ae45;
+  --text:#291a14;
+  --muted:#765f51;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--text);
+  font-family:Inter,Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+}
+button{font:inherit}
+.navbar{
+  height:88px;
+  padding:0 7.5%;
+  background:linear-gradient(135deg,#24150f,#3a2218);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  z-index:20;
+}
+.brand{display:flex;align-items:center;gap:13px; text-decoration: none;}
+.brand-icon{
+  width:47px;height:47px;border:2px solid #fff;border-radius:50%;
+  display:grid;place-items:center;font-size:23px;position:relative;
+}
+.brand-icon:before,.brand-icon:after{
+  content:"";position:absolute;top:-14px;width:3px;height:15px;
+  border-radius:5px;background:#fff;
+}
+.brand-icon:before{left:17px;transform:rotate(-12deg)}
+.brand-icon:after{left:27px;transform:rotate(12deg)}
+.brand-name{font-size:28px;font-weight:850;letter-spacing:-1.2px;white-space:nowrap; color:#fff;}
+.brand-tag{
+  margin-left:10px;padding-left:18px;border-left:1px solid #ffffff55;
+  color:#e9dacf;font-size:15px;letter-spacing:.08em;
+}
+.nav-links{display:flex;gap:34px;font-size:15px; align-items: center;}
+.nav-links a{color:#f7eee8;padding:32px 0 26px;position:relative; text-decoration: none;}
+.nav-links a.active:after{
+  content:"";position:absolute;left:0;right:0;bottom:18px;height:3px;
+  border-radius:4px;background:#e9bd69;
+}
+.nav-settings-btn { cursor: pointer; color:#f7eee8; display: flex; align-items: center; gap: 6px; font-weight:600; }
+.nav-settings-btn:hover { color:#e9bd69; }
+
+.hero{
+  min-height:calc(100vh - 88px);
+  padding:52px 6.5% 58px;
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 76% 25%,#fff9efaa,transparent 29%),
+    radial-gradient(circle at 12% 70%,#a9754a22,transparent 27%),
+    linear-gradient(135deg,#eee0cf,#d7c0a7 55%,#eadbca);
+}
+.hero:before{
+  content:"";position:absolute;inset:0;opacity:.22;
+  background-image:radial-gradient(circle at 10px 10px,#6b4b371f 1px,transparent 1.5px);
+  background-size:22px 22px;pointer-events:none;
+}
+.hero-grid{
+  max-width:1450px;margin:auto;min-height:calc(100vh - 198px);
+  display:grid;grid-template-columns:.78fr 1.4fr .9fr;
+  align-items:center;gap:38px;position:relative;z-index:2;
+}
+.intro{padding-left:8px}
+.eyebrow{
+  font-size:12px;font-weight:800;letter-spacing:.22em;
+  text-transform:uppercase;color:#89634d;margin-bottom:17px;
+}
+.intro h1{
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  font-style:italic;font-size:clamp(42px,4.1vw,69px);
+  line-height:.98;letter-spacing:-3px;margin:0 0 25px;max-width:440px;
+}
+.intro h1 span{display:inline-block;position:relative}
+.intro h1 span:after{
+  content:"";position:absolute;left:3px;bottom:-11px;width:95px;height:4px;
+  border-radius:50%;background:#3d2519;transform:rotate(-4deg);
+}
+.intro p{max-width:320px;font-size:17px;line-height:1.75;color:#59463b;margin:0}
+
+.bean{
+  position:absolute;width:18px;height:12px;border-radius:80% 20% 80% 20%;
+  background:#4b2d1d;box-shadow:0 2px 5px #0002;transform:rotate(28deg);
+}
+.bean:after{
+  content:"";position:absolute;left:9px;top:1px;width:1px;height:11px;
+  background:#ffffff30;transform:rotate(20deg);
+}
+.b1{left:2%;bottom:10%;transform:rotate(35deg) scale(1.2)}
+.b2{left:17%;bottom:5%;transform:rotate(-30deg)}
+.b3{right:3%;bottom:8%;transform:rotate(55deg) scale(1.4)}
+.b4{right:14%;bottom:3%;transform:rotate(-15deg) scale(.8)}
+
+.wheel-stage{
+  display:flex;justify-content:center;align-items:center;
+  position:relative;min-width:0;
+}
+.pointer{
+  position:absolute;z-index:12;top:-8px;left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:25px solid transparent;border-right:25px solid transparent;
+  border-bottom:48px solid var(--gold);
+  filter:drop-shadow(0 5px 3px #0004);
+}
+.pointer:after{
+  content:"";position:absolute;left:-17px;top:5px;width:34px;height:34px;
+  border-radius:50%;background:#f8c768;border:2px solid #9e6724;z-index:-1;
+}
+
+.wheel{
+  width:min(530px,43vw);height:min(530px,43vw);
+  min-width:360px;min-height:360px;max-width:530px;max-height:530px;
+  border-radius:50%;position:relative;border:14px solid #3b251a;
+  box-shadow:0 12px 0 #21140e,0 28px 55px #321e134d;
+  transform:rotate(0deg);
+}
+.wheel:before{
+  content:"";position:absolute;inset:9px;border-radius:50%;
+  border:1px solid #ffffff77;pointer-events:none;z-index:3;
+}
+.wheel-lines {
+  position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:1;
+}
+
+.wheel-label{
+  position:absolute;z-index:4;
+  width:140px;text-align:center;
+  font-size:17px;font-weight:850;letter-spacing:2px;
+  color:#fff;text-shadow:0 2px 4px #0005;
+  pointer-events:none;
+  text-transform:uppercase;
+  line-height:1.2;
+}
+.wheel-label.dark{color:#34261f;text-shadow:none}
+
+.center-button{
+  position:absolute;z-index:10;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:124px;height:124px;border-radius:50%;
+  border:8px solid #68452f;background:radial-gradient(circle at 35% 30%,#563724,#281811);
+  color:#fff;cursor:pointer;
+  box-shadow:inset 0 3px 7px #ffffff1f,0 7px 12px #0006;
+  transition:.2s ease;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.center-button:hover{transform:translate(-50%,-50%) scale(1.04)}
+.center-button:active{transform:translate(-50%,-50%) scale(.97)}
+.center-button .spin-icon{font-size:26px;line-height:1;margin-bottom:6px}
+.center-button strong{font-size:18px;letter-spacing:3px}
+.center-button small{font-size:8px;letter-spacing:1.5px;opacity:.65;margin-top:3px}
+.spinning .center-button{pointer-events:none;opacity:.72}
+
+.result-column{display:flex;flex-direction:column;gap:22px}
+.result-card{
+  background:#fffaf3df;backdrop-filter:blur(12px);
+  border:1px solid #fff8;border-radius:28px;padding:36px 34px 30px;
+  box-shadow:0 24px 70px #341f142e;text-align:center;
+}
+.result-card .label{
+  color:#705d51;font-size:13px;letter-spacing:.15em;
+  font-weight:700;text-transform:uppercase;
+}
+.cup{font-size:72px;line-height:1;margin:19px 0 12px;filter:drop-shadow(0 7px 5px #4225141f)}
+.result-title{margin:0;font-size:28px;letter-spacing:-.8px;font-weight:850}
+.result-subtitle{margin:10px auto 27px;max-width:260px;line-height:1.55;color:#78665b;font-size:14px}
+.stats{border-top:1px solid #53392b2e;padding-top:20px;display:grid;grid-template-columns:repeat(3,1fr)}
+.stat{padding:0 10px;border-right:1px solid #53392b2e}
+.stat:last-child{border-right:0}
+.stat-icon{font-size:19px;margin-bottom:6px}
+.stat b{display:block;font-size:12px;margin-bottom:3px}
+.stat span{display:block;color:#907d70;font-size:11px}
+.quote{
+  background:linear-gradient(135deg,#3a2419,#24160f);border-radius:22px;
+  padding:23px 25px;color:#f8eee4;box-shadow:0 15px 35px #301c122e;
+  display:flex;gap:15px;align-items:center;
+}
+.quote-cup{font-size:35px;flex:0 0 auto}
+.quote p{margin:0;font-size:14px;line-height:1.55;font-style:italic;color:#eadbcf}
+.quote-line{display:block;width:44px;height:2px;background:#d9a95b;margin-top:10px}
+
+footer{
+  background:#25160f;color:#eee2d7;min-height:70px;padding:0 7%;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:13px;
+}
+.footer-left{display:flex;align-items:center;gap:20px}
+.footer-brand{font-weight:800;font-size:16px}
+.footer-divider{height:20px;width:1px;background:#ffffff33}
+.footer-muted{color:#9e8d81}
+.socials{display:flex;gap:18px;font-size:19px; align-items: center;}
+.mobile-settings-btn { display: none; background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
+
+/* Toast */
+.toast{
+  position:fixed;left:50%;bottom:25px;transform:translate(-50%,25px);
+  z-index:100;padding:14px 22px;border-radius:999px;color:#fff;background:#2b1a12;
+  box-shadow:0 12px 35px #0005;opacity:0;pointer-events:none;
+  transition:.35s ease;font-size:14px;font-weight:700;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Modal Settings */
+.modal {
+  position: fixed; inset: 0; background: rgba(36,21,15,0.8); z-index: 1000;
+  display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.modal.show { display: flex; opacity: 1; }
+.modal-content {
+  background: var(--cream2); padding: 25px; border-radius: 20px;
+  width: 90%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  color: var(--text); max-height: 90vh; overflow-y: auto;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-header h3 { margin: 0; font-size: 20px; color: var(--brown); }
+.close-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--brown); line-height: 1;}
+.coffee-list { max-height: 250px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
+.coffee-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px; background: rgba(0,0,0,0.05); border-radius: 12px; margin-bottom: 10px;
+}
+.coffee-item-info { display: flex; flex-direction: column; gap: 4px; }
+.coffee-item-name { font-weight: 800; font-size: 15px; }
+.coffee-item-desc { font-size: 12px; color: var(--muted); }
+.del-btn { background: #ae3f16; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;}
+.add-coffee-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.add-coffee-form input {
+  padding: 12px; border: 1px solid #d7c0a7; border-radius: 10px; font-family: inherit; font-size: 14px; background: #fff;
+}
+.add-coffee-form button {
+  padding: 12px; background: var(--brown2); color: #fff; border: none; border-radius: 10px; cursor: pointer; font-weight: bold;
+}
+.save-btn { width: 100%; padding: 14px; background: var(--gold); color: var(--brown); border: none; border-radius: 10px; font-weight: 850; font-size: 16px; cursor: pointer; }
+
+@media(max-width:1120px){
+  .hero-grid{
+    grid-template-columns:1fr 1.25fr;
+    grid-template-areas:"intro wheel" "result result";
+  }
+  .intro{grid-area:intro}.wheel-stage{grid-area:wheel}
+  .result-column{
+    grid-area:result;max-width:650px;width:100%;margin:0 auto;
+    display:grid;grid-template-columns:1fr 1fr;
+  }
+  .quote{height:100%}
+}
+@media(max-width:780px){
+  .navbar{height:auto;min-height:74px;padding:15px 20px}
+  .brand-name{font-size:22px}.brand-icon{width:39px;height:39px;font-size:18px}
+  .brand-tag,.nav-links{display:none}
+  .mobile-settings-btn { display: block; } 
+  .hero{padding:38px 18px 45px}
+  .hero-grid{display:flex;flex-direction:column;min-height:auto;gap:32px}
+  .intro{width:100%;text-align:center;padding:0}
+  .eyebrow{margin-bottom:12px}
+  .intro h1{margin:0 auto 19px;font-size:44px;letter-spacing:-2px}
+  .intro p{margin:auto;font-size:15px;line-height:1.6;max-width:360px}
+  .wheel-stage{width:100%;padding-top:20px}
+  .wheel{
+    width:min(88vw,450px);height:min(88vw,450px);
+    min-width:300px;min-height:300px;border-width:11px;
+  }
+  .pointer{top:0;border-left-width:19px;border-right-width:19px;border-bottom-width:39px}
+  .pointer:after{left:-14px;width:28px;height:28px}
+  .wheel-label{width:100px;font-size:14px;letter-spacing:1px}
+  .center-button{width:91px;height:91px;border-width:6px}
+  .center-button .spin-icon{font-size:20px}
+  .center-button strong{font-size:14px;letter-spacing:2px}
+  .center-button small{font-size:6px}
+  .result-column{display:flex;width:100%;gap:15px}
+  .result-card{padding:28px 18px 24px;border-radius:23px}
+  .cup{font-size:58px}.result-title{font-size:25px}
+  .result-subtitle{font-size:13px;margin-bottom:20px}
+  .quote{padding:20px;border-radius:19px}
+  footer{padding:18px 20px;flex-direction:column;justify-content:center;text-align:center}
+  .footer-left{flex-direction:column;gap:8px}.footer-divider{display:none}
+}
+@media(max-width:390px){
+  .intro h1{font-size:39px}
+  .wheel{width:91vw;height:91vw}
+  .result-card{padding-left:13px;padding-right:13px}
+  .stat{padding:0 5px}
+}
+</style>
 </head>
-
 <body>
 
-  <header class="navbar">
-    <a href="#" class="brand">
-      <div class="brand-icon">☕</div>
-      <div class="brand-name">Coffee Roulette</div>
-      <div class="brand-tag">Spin · Brew · Enjoy</div>
-    </a>
+<header class="navbar">
+  <a href="#" class="brand">
+    <div class="brand-icon">☕</div>
+    <div class="brand-name">Coffee Roulette</div>
+    <div class="brand-tag">Spin · Brew · Enjoy</div>
+  </a>
+  <nav class="nav-links">
+    <a href="#" class="active">⌂ &nbsp;Home</a>
+    <!-- Menu Atur Kopi menggantikan Daftar Kopi agar tidak dobel -->
+    <a class="nav-settings-btn" id="deskSettingsBtn">⚙️ &nbsp;Atur Kopi</a>
+  </nav>
+</header>
 
-    <nav class="nav-links">
-      <a href="#" class="active"><span class="nav-icon">⌂</span> Home</a>
-      <a href="#wheel"><span class="nav-icon">▣</span> Daftar Kopi</a>
-      <a href="#about"><span class="nav-icon">?</span> Tentang</a>
-    </nav>
-  </header>
+<main class="hero" id="wheelSection">
+  <div class="bean b1"></div><div class="bean b2"></div>
+  <div class="bean b3"></div><div class="bean b4"></div>
 
-  <main class="hero" id="wheel">
-    <div class="coffee-steam"></div>
+  <section class="hero-grid">
+    <div class="intro">
+      <div class="eyebrow">☕ Daily Coffee Picker</div>
+      <h1>Mau pesan<br>kopi apa<br><span>hari ini?</span></h1>
+      <p>Biarkan roda ini menentukan pilihanmu. Putar, dan nikmati kejutan rasa hari ini!</p>
+    </div>
 
-    <div class="bean b1"></div>
-    <div class="bean b2"></div>
-    <div class="bean b3"></div>
-    <div class="bean b4"></div>
+    <div class="wheel-stage">
+      <div class="pointer"></div>
 
-    <section class="hero-grid">
+      <div class="wheel" id="wheelElement">
+        <div class="wheel-lines" id="wheelLines"></div>
+        <!-- Teks Kopi kini akan dirender mati di sini oleh JavaScript tanpa berpindah-pindah lagi -->
+        
+        <button class="center-button" id="spinButton" aria-label="Putar roda kopi">
+          <div class="spin-icon">⟳</div>
+          <strong>SPIN</strong>
+          <small>PILIH KOPI</small>
+        </button>
+      </div>
+    </div>
 
-      <!-- LEFT -->
-      <div class="intro">
-        <div class="eyebrow">☕ Daily Coffee Picker</div>
-        <h1>Mau pesan<br>kopi apa<br><span>hari ini?</span></h1>
-        <p>
-          Biarkan roda ini menentukan pilihanmu.
-          Putar, dan nikmati kejutan rasa hari ini!
+    <div class="result-column" id="about">
+      <div class="result-card">
+        <div class="label">Kopi pilihan hari ini</div>
+        <div class="cup" id="resultCup">☕</div>
+        <h2 class="result-title" id="resultTitle">Silakan putar roda!</h2>
+        <p class="result-subtitle" id="resultText">Siapa tahu hari ini kamu dapat kopi favoritmu.</p>
+
+        <div class="stats">
+          <div class="stat"><div class="stat-icon">◒</div><b>Kopi</b><span>Berkualitas</span></div>
+          <div class="stat"><div class="stat-icon">★</div><b>Rasa</b><span>Terbaik</span></div>
+          <div class="stat"><div class="stat-icon">♡</div><b>Setiap Hari</b><span>Penuh Cerita</span></div>
+        </div>
+      </div>
+
+      <div class="quote">
+        <div class="quote-cup">☕</div>
+        <p>“Kopi yang baik bukan hanya tentang rasa, tapi juga tentang momen yang tepat.”
+          <span class="quote-line"></span>
         </p>
       </div>
-
-      <!-- WHEEL -->
-      <div class="wheel-stage">
-        <div class="pointer"></div>
-
-        <div class="wheel" id="wheelElement">
-
-          <div class="wheel-label l1">
-            <div class="mini">◒</div>
-            COUVEE
-            <small>SPECIALTY COFFEE</small>
-          </div>
-
-          <div class="wheel-label l2">
-            COSAN
-            <small>COFFEE</small>
-          </div>
-
-          <div class="wheel-label l3">
-            <span style="font-size:25px">28</span>
-            <small>COFFEE</small>
-          </div>
-
-          <div class="wheel-label l4">
-            <span style="font-size:23px">AWOR</span>
-            Coffee
-            <small>COFFEE</small>
-          </div>
-
-          <div class="wheel-label l5">
-            FORDO
-            <small>COFFEE</small>
-          </div>
-
-          <div class="wheel-label l6">
-            KOFIBRU
-            <small>COFFEE</small>
-          </div>
-
-          <button class="center-button" id="spinButton" aria-label="Putar roda kopi">
-            <div class="spin-icon">⟳</div>
-            <strong>SPIN</strong>
-            <small>PILIH KOPI</small>
-          </button>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div class="result-column" id="about">
-
-        <div class="result-card">
-          <div class="label">Kopi pilihan hari ini</div>
-
-          <div class="cup" id="resultCup">☕</div>
-
-          <h2 class="result-title" id="resultTitle">Silakan putar roda!</h2>
-
-          <p class="result-subtitle" id="resultText">
-            Siapa tahu hari ini kamu dapat kopi favoritmu.
-          </p>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-icon">◒</div>
-              <b>Kopi</b>
-              <span>Berkualitas</span>
-            </div>
-
-            <div class="stat">
-              <div class="stat-icon">★</div>
-              <b>Rasa</b>
-              <span>Terbaik</span>
-            </div>
-
-            <div class="stat">
-              <div class="stat-icon">♡</div>
-              <b>Setiap Hari</b>
-              <span>Penuh Cerita</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="quote">
-          <div class="quote-cup">☕</div>
-          <p>
-            “Kopi yang baik bukan hanya tentang rasa,
-            tapi juga tentang momen yang tepat.”
-            <span class="quote-line"></span>
-          </p>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footer-left">
-      <div class="footer-brand">Coffee Roulette</div>
-      <div class="footer-divider"></div>
-      <div class="footer-muted">Spin today, enjoy your coffee!</div>
     </div>
+  </section>
+</main>
 
-    <div class="socials">
-      <span>◎</span>
-      <span>♪</span>
-      <span>➤</span>
+<footer>
+  <div class="footer-left">
+    <div class="footer-brand">Coffee Roulette</div>
+    <div class="footer-divider"></div>
+    <div class="footer-muted">Spin today, enjoy your coffee!</div>
+  </div>
+  <div class="socials">
+    <!-- Tombol Pengaturan untuk layar HP -->
+    <button class="mobile-settings-btn" id="mobSettingsBtn" aria-label="Atur Kopi">⚙️</button>
+    <span>◎</span><span>♪</span><span>➤</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- Modal CRUD Kopi -->
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Pengaturan Roda Kopi</h3>
+      <button class="close-btn" id="closeSettingsBtn">&times;</button>
     </div>
-  </footer>
+    
+    <div class="coffee-list" id="coffeeListUI">
+      <!-- List otomatis dimuat disini -->
+    </div>
+    
+    <div class="add-coffee-form">
+      <input type="text" id="newCoffeeName" placeholder="Nama Kopi (Cth: Couvee)" maxlength="15">
+      <input type="text" id="newCoffeeText" placeholder="Pesan singkat (Cth: Waktunya ngopi!)" maxlength="60">
+      <button id="addCoffeeBtn">+ Tambah Kopi</button>
+    </div>
+    
+    <button class="save-btn" id="saveSettingsBtn">Simpan Perubahan Roda</button>
+  </div>
+</div>
 
-  <div class="toast" id="toast"></div>
+<script>
+// DOM Elements
+const wheel = document.getElementById('wheelElement');
+const wheelLines = document.getElementById('wheelLines');
+const button = document.getElementById('spinButton');
+const resultTitle = document.getElementById('resultTitle');
+const resultText = document.getElementById('resultText');
+const resultCup = document.getElementById('resultCup');
+const toast = document.getElementById('toast');
 
-  <script>
-    const wheel = document.getElementById("wheelElement");
-    const button = document.getElementById("spinButton");
-    const resultTitle = document.getElementById("resultTitle");
-    const resultText = document.getElementById("resultText");
-    const resultCup = document.getElementById("resultCup");
-    const toast = document.getElementById("toast");
+// Settings DOM
+const settingsModal = document.getElementById('settingsModal');
+const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+const deskSettingsBtn = document.getElementById('deskSettingsBtn');
+const mobSettingsBtn = document.getElementById('mobSettingsBtn');
+const coffeeListUI = document.getElementById('coffeeListUI');
 
-    const coffees = [
-      {
-        name: "Couvee",
-        text: "Hari ini waktunya menikmati kopi dari Couvee.",
-        cup: "☕"
-      },
-      {
-        name: "Cosan",
-        text: "Pilihanmu jatuh ke Cosan. Saatnya ngopi!",
-        cup: "☕"
-      },
-      {
-        name: "28 Coffee",
-        text: "28 Coffee terpilih! Semoga jadi kopi terbaik hari ini.",
-        cup: "☕"
-      },
-      {
-        name: "Awor Coffee",
-        text: "Awor jadi pilihanmu. Yuk, nikmati kopinya perlahan.",
-        cup: "☕"
-      },
-      {
-        name: "Fordo",
-        text: "Fordo terpilih! Jangan terlalu banyak mikir, langsung pesan.",
-        cup: "☕"
-      },
-      {
-        name: "Kofibru",
-        text: "Kofibru memanggil hari ini. Gas ngopi!",
-        cup: "☕"
-      }
-    ];
+// Default Data & State
+const defaultCoffees = [
+  { name:'Couvee', text:'Hari ini waktunya menikmati kopi dari Couvee.' },
+  { name:'Cosan', text:'Pilihanmu jatuh ke Cosan. Saatnya ngopi!' },
+  { name:'28 Coffee', text:'28 Coffee terpilih! Semoga jadi kopi terbaik hari ini.' },
+  { name:'Awor', text:'Awor jadi pilihanmu. Yuk, nikmati kopinya perlahan.' },
+  { name:'Fordo', text:'Fordo terpilih! Jangan terlalu banyak mikir, langsung pesan.' },
+  { name:'Kofibru', text:'Kofibru memanggil hari ini. Gas ngopi!' }
+];
+const palette = ['#eee1cb', '#ae3f16', '#174b39', '#172e47', '#756071', '#242a2c', '#d9a95b', '#68452f', '#40261a'];
 
-    let currentRotation = 0;
-    let spinning = false;
+let coffees = JSON.parse(localStorage.getItem('myCoffeeList')) || defaultCoffees;
+let tempCoffees = [...coffees]; 
 
-    function showToast(message){
-      toast.textContent = message;
-      toast.classList.add("show");
-      clearTimeout(showToast.timer);
-      showToast.timer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 2800);
+let rotation = 0;
+let spinning = false;
+let centers = [];
+
+function normalize(deg) { return ((deg % 360) + 360) % 360; }
+
+// LOGIKA RODA - DIKOREKSI AGAR PRESISI
+function initWheel() {
+  const N = coffees.length;
+  const anglePerSector = 360 / N;
+  
+  // Hapus semua teks lama untuk merender ulang
+  document.querySelectorAll('.wheel-label').forEach(e => e.remove());
+  centers = [];
+  
+  let gradientArgs = [];
+  let overlayArgs = [];
+  let startDeg = -(anglePerSector / 2);
+
+  for (let i = 0; i < N; i++) {
+    const centerAngle = i * anglePerSector;
+    centers.push(centerAngle);
+    
+    let nextDeg = startDeg + anglePerSector;
+    let color = palette[i % palette.length];
+
+    gradientArgs.push(`${color} ${startDeg}deg ${nextDeg}deg`);
+    overlayArgs.push(`transparent ${startDeg}deg ${nextDeg - 1}deg`);
+    overlayArgs.push(`rgba(255,255,255,0.4) ${nextDeg - 1}deg ${nextDeg}deg`);
+    startDeg = nextDeg;
+
+    // Fiksasi Label: Dihitung menggunakan persentase posisi agar menempel permanen di roda
+    let label = document.createElement('div');
+    label.className = 'wheel-label';
+    if (color === '#eee1cb' || color === '#f8c768') label.classList.add('dark');
+    
+    const rad = centerAngle * Math.PI / 180;
+    const radiusPercent = 35.5; // Titik tumpu teks berada ~35% dari tengah lingkaran
+    
+    const x = Math.sin(rad) * radiusPercent;
+    const y = -Math.cos(rad) * radiusPercent;
+
+    label.style.left = `calc(50% + ${x}%)`;
+    label.style.top = `calc(50% + ${y}%)`;
+    // Memutar teks di awal saja, mengimbangi sudut sektor agar teks mendatar saat di atas
+    label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
+    
+    label.innerHTML = `<div>${coffees[i].name}</div>`;
+    wheel.appendChild(label);
+  }
+
+  wheel.style.background = `conic-gradient(${gradientArgs.join(', ')})`;
+  wheelLines.style.background = `conic-gradient(${overlayArgs.join(', ')})`;
+
+  render(rotation);
+}
+
+// Render kini murni hanya memutar roda luarnya, meringankan browser
+function render(angle) {
+  rotation = angle;
+  wheel.style.transform = `rotate(${angle}deg)`;
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// Logika Putar Roda
+button.addEventListener('click', () => {
+  if (spinning) return;
+  spinning = true;
+  document.body.classList.add('spinning');
+
+  const winner = Math.floor(Math.random() * coffees.length);
+  const desired = normalize(-centers[winner]);
+  const current = normalize(rotation);
+  let delta = desired - current;
+  if (delta < 0) delta += 360;
+
+  const start = rotation;
+  const end = rotation + (7 * 360) + delta;
+  const duration = 5200;
+  const t0 = performance.now();
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+
+  function animate(now) {
+    const t = Math.min(1, (now - t0) / duration);
+    const value = start + (end - start) * easeOut(t);
+    render(value);
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      render(end); // Kunci presisi secara matematis pada rotasi final
+      const coffee = coffees[winner];
+      resultTitle.textContent = coffee.name;
+      resultText.textContent = coffee.text;
+      resultCup.textContent = '☕';
+      showToast(`☕ Hari ini: ${coffee.name}`);
+      spinning = false;
+      document.body.classList.remove('spinning');
     }
+  }
+  requestAnimationFrame(animate);
+});
 
-    button.addEventListener("click", () => {
-      if(spinning) return;
+// ==== LOGIKA PENGATURAN (CRUD) ====
+function openModal() {
+  tempCoffees = [...coffees];
+  renderCoffeeList();
+  settingsModal.classList.add('show');
+}
+function closeModal() { settingsModal.classList.remove('show'); }
 
-      spinning = true;
-      document.body.classList.add("spinning");
+deskSettingsBtn.addEventListener('click', (e) => { e.preventDefault(); openModal(); });
+mobSettingsBtn.addEventListener('click', openModal);
+closeSettingsBtn.addEventListener('click', closeModal);
 
-      // Random winner.
-      const winner = Math.floor(Math.random() * coffees.length);
+function renderCoffeeList() {
+  coffeeListUI.innerHTML = '';
+  tempCoffees.forEach((c, index) => {
+    const div = document.createElement('div');
+    div.className = 'coffee-item';
+    div.innerHTML = `
+      <div class="coffee-item-info">
+        <span class="coffee-item-name">${c.name}</span>
+        <span class="coffee-item-desc">${c.text}</span>
+      </div>
+      <button class="del-btn" onclick="removeCoffee(${index})">Hapus</button>
+    `;
+    coffeeListUI.appendChild(div);
+  });
+}
 
-      // Each segment is 60 degrees.
-      // The pointer is at the top, so rotate the selected segment toward 0deg.
-      const segmentCenter = winner * 60 + 30;
+window.removeCoffee = function(index) {
+  if (tempCoffees.length <= 2) {
+    alert('Minimal harus ada 2 pilihan kopi di roda!');
+    return;
+  }
+  tempCoffees.splice(index, 1);
+  renderCoffeeList();
+}
 
-      // Add 6–8 full turns for a satisfying spin.
-      const extraTurns = 6 + Math.floor(Math.random() * 3);
+document.getElementById('addCoffeeBtn').addEventListener('click', () => {
+  const nameInput = document.getElementById('newCoffeeName');
+  const textInput = document.getElementById('newCoffeeText');
+  const name = nameInput.value.trim();
+  const text = textInput.value.trim();
 
-      // Small random offset inside the segment.
-      const randomOffset = (Math.random() - 0.5) * 36;
+  if (!name || !text) { alert('Harap isi Nama dan Pesan Kopi!'); return; }
+  if (tempCoffees.length >= 12) { alert('Maksimal 12 kopi agar roda tetap proporsional.'); return; }
 
-      const target = extraTurns * 360 + (360 - segmentCenter + randomOffset);
+  tempCoffees.push({ name, text });
+  nameInput.value = '';
+  textInput.value = '';
+  renderCoffeeList();
+});
 
-      currentRotation += target;
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  coffees = [...tempCoffees];
+  localStorage.setItem('myCoffeeList', JSON.stringify(coffees));
+  initWheel(); 
+  closeModal();
+  showToast('Pengaturan roda kopi diperbarui!');
+});
 
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-      setTimeout(() => {
-        const coffee = coffees[winner];
-
-        resultTitle.textContent = coffee.name;
-        resultText.textContent = coffee.text;
-        resultCup.textContent = coffee.cup;
-
-        showToast(`☕ Hari ini: ${coffee.name}`);
-
-        spinning = false;
-        document.body.classList.remove("spinning");
-      }, 5250);
-    });
-  </script>
-
+initWheel();
+</script>
 </body>
 </html>
