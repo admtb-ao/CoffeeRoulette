@@ -329,10 +329,8 @@ footer{
 
     <div class="wheel-stage">
       <div class="pointer"></div>
-
       <div class="wheel" id="wheelElement">
         <div class="wheel-lines" id="wheelLines"></div>
-        
         <button class="center-button" id="spinButton" aria-label="Putar roda kopi">
           <div class="spin-icon">⟳</div>
           <strong>SPIN</strong>
@@ -341,14 +339,12 @@ footer{
       </div>
     </div>
 
-    <!-- Tambahkan ID target auto-scroll di sini -->
     <div class="result-column" id="aboutTarget">
       <div class="result-card">
         <div class="label">Kopi pilihan hari ini</div>
         <div class="cup" id="resultCup">☕</div>
         <h2 class="result-title" id="resultTitle">Silakan putar roda!</h2>
         <p class="result-subtitle" id="resultText">Siapa tahu hari ini kamu dapat kopi favoritmu.</p>
-
         <div class="stats">
           <div class="stat"><div class="stat-icon">◒</div><b>Kopi</b><span>Berkualitas</span></div>
           <div class="stat"><div class="stat-icon">★</div><b>Rasa</b><span>Terbaik</span></div>
@@ -387,16 +383,12 @@ footer{
       <h3>Pengaturan Roda Kopi</h3>
       <button class="close-btn" id="closeSettingsBtn">&times;</button>
     </div>
-    
-    <div class="coffee-list" id="coffeeListUI">
-    </div>
-    
+    <div class="coffee-list" id="coffeeListUI"></div>
     <div class="add-coffee-form">
       <input type="text" id="newCoffeeName" placeholder="Nama Kopi (Cth: Couvee)" maxlength="15">
       <input type="text" id="newCoffeeText" placeholder="Pesan singkat (Cth: Waktunya ngopi!)" maxlength="60">
       <button id="addCoffeeBtn">+ Tambah Kopi</button>
     </div>
-    
     <button class="save-btn" id="saveSettingsBtn">Simpan Perubahan Roda</button>
   </div>
 </div>
@@ -432,6 +424,45 @@ let tempCoffees = [...coffees];
 let rotation = 0;
 let spinning = false;
 let centers = [];
+
+// ======= WEB AUDIO API SETUP =======
+let audioCtx;
+
+// Suara ketukan jarum (klik/tick)
+function playTick() {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(250, audioCtx.currentTime); // Pitch rendah menyerupai kayu
+  osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.04);
+  gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.05);
+}
+
+// Suara "Ting!" menang
+function playWinSound() {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+  osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+  osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.05);
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.2);
+  gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.5);
+}
+// ===================================
 
 function normalize(deg) { return ((deg % 360) + 360) % 360; }
 
@@ -478,7 +509,6 @@ function initWheel() {
 
   wheel.style.background = `conic-gradient(${gradientArgs.join(', ')})`;
   wheelLines.style.background = `conic-gradient(${overlayArgs.join(', ')})`;
-
   render(rotation);
 }
 
@@ -496,6 +526,11 @@ function showToast(message) {
 
 button.addEventListener('click', () => {
   if (spinning) return;
+  
+  // Inisialisasi Audio Engine saat pengguna klik agar tidak diblokir browser
+  if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+
   spinning = true;
   document.body.classList.add('spinning');
 
@@ -509,6 +544,10 @@ button.addEventListener('click', () => {
   const end = rotation + (7 * 360) + delta;
   const duration = 5200;
   const t0 = performance.now();
+  
+  // Jarak setiap bunyi cetek. Diatur per 30 derajat agar sering dan terasa nyata
+  const tickInterval = 30; 
+  let lastTickPhase = Math.floor(start / tickInterval);
 
   function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
 
@@ -517,10 +556,18 @@ button.addEventListener('click', () => {
     const value = start + (end - start) * easeOut(t);
     render(value);
 
+    // KUNCI SINKRONISASI SUARA: Semakin cepat nilai "value" berubah, semakin cepat kliknya.
+    const currentTickPhase = Math.floor(value / tickInterval);
+    if (currentTickPhase > lastTickPhase) {
+      playTick();
+      lastTickPhase = currentTickPhase;
+    }
+
     if (t < 1) {
       requestAnimationFrame(animate);
     } else {
       render(end); 
+      playWinSound(); // Suara "Ting!" saat berhenti
       const coffee = coffees[winner];
       resultTitle.textContent = coffee.name;
       resultText.textContent = coffee.text;
@@ -529,12 +576,10 @@ button.addEventListener('click', () => {
       spinning = false;
       document.body.classList.remove('spinning');
 
-      // FITUR AUTO-SCROLL BARU
-      // Beri jeda 800ms agar user bisa melihat posisi panah berhenti dulu, lalu geser ke bawah otomatis
       setTimeout(() => {
         document.getElementById('aboutTarget').scrollIntoView({ 
           behavior: 'smooth', 
-          block: 'center' // 'center' membuat kartu hasil berada pas di tengah layar HP
+          block: 'center' 
         });
       }, 800);
     }
